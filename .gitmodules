@@ -1,0 +1,3 @@
+[submodule "restingIAF"]
+	path = restingIAF
+	url = https://github.com/corcorana/restingIAF.git
