@@ -18,17 +18,18 @@ if nargin < 3
     error('eegplugin_eegstats requires 3 arguments');
 end
 
-if ~exist('pop_eegstats')
+if ~exist('restingIAF')
     p = which('eegplugin_eegstats');
-    p = p(1:findstr(p,'eegplugin_eegstats.m')-1);
+    p = fileparts(p);
     addpath(p);
+    addpath(fullfile(p, 'restingIAF'));
 end
 
 % find DIPFIT menu handle
 tools_m = findobj(fig, 'tag', 'tools'); % find by tag
 
 % we create the menu below
-cb = [ 'try, LASTCOM = pop_eegstats(EEG);' catchstrs.add_to_hist  ];
+cb = [ 'try, [~,~,~,LASTCOM] = pop_eegstats(EEG);' catchstrs.add_to_hist  ];
 uimenu( tools_m, 'label', 'EEG stats', 'CallBack', cb, 'separator', 'on');
 
 
