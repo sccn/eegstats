@@ -31,6 +31,16 @@ Alpha center of gravity	9.36	8.65	8.88	8.94	8.87	8.99	8.97	9.12	8.99	9.05	9.14	9
 Alpha Asymmetry	0.62408
 ```
 
+You can also recover these statistics using the command line call (see function help for more information):
+
+```
+[power, iafSum, iafChan, freqs] = pop_eegstats(EEG, 'thetarange',[4 6] ,'alpharange',[8 12] , ...
+            'otherranges',[18 22;30 45],'averagepower','off','channels','','winsize',2, ...
+            'overlap',1,'iaf','on','iafminchan',1,'alphaasymmetry','on','asymchans','F3 F4');
+```
+
+
+
 # Version history
 
 v1.0 - initial version
