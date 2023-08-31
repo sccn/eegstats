@@ -33,7 +33,7 @@ Alpha Asymmetry	0.62408
 
 You can also recover these statistics using the command line call (see function help for more information):
 
-```
+```matlab
 [power, iafSum, iafChan, freqs] = pop_eegstats(EEG, 'thetarange',[4 6] ,'alpharange',[8 12] , ...
             'otherranges',[18 22;30 45],'averagepower','off','channels','','winsize',2, ...
             'overlap',1,'iaf','on','iafminchan',1,'alphaasymmetry','on','asymchans','F3 F4');
