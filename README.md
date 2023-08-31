@@ -39,8 +39,6 @@ You can also recover these statistics using the command line call (see function 
             'overlap',1,'iaf','on','iafminchan',1,'alphaasymmetry','on','asymchans','F3 F4', ...
             'csvfile','save_these_results.csv');
 ```
-```
-
 
 
 # Version history
