@@ -1,8 +1,8 @@
 % pop_eegstats() - fit multiple component dipoles using DIPFIT
 %
 % Usage:
-%         >> EEG = pop_eegstats(EEG); % pop-up graphical interface
-%         >> results = pop_eegstats(EEG, 'key', 'val', ...);
+%         >> pop_eegstats(EEG); % pop-up graphical interface
+%         >> [power, iafSum, iafChan, freqs] = pop_eegstats(EEG, 'key', 'val', ...);
 %
 % Inputs:
 %  EEG      - input EEGLAB dataset.
@@ -20,7 +20,7 @@
 % 'overlap'        - [float] overlap in seconds for power density estimate.
 %                    Default is 2 seconds.
 % 'csvfile'        - ['string'] file name to save results. Default is to
-%                    display results on the command line.
+%                    only display results on the command line.
 %
 % Individual alpha frequency options:
 % 'iaf'            - ['on' or 'off'] save/display individual alpha frequencies
@@ -44,6 +44,10 @@
 % 'taper' (all with default the same as the restingIAF function).
 %
 % Outputs: same as restingIAF function
+%   power   = spectral power computed using the pwelch function
+%   pSum    = structure containing summary statistics of alpha-band parameters
+%   pChans  = structure containing channel-wise spectral and alpha parameter data
+%   f       = trimmed vector of frequency bins resolved by `pwelch`
 %
 % See also: restingIAF()
 %
@@ -73,7 +77,7 @@
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 % THE POSSIBILITY OF SUCH DAMAGE.
 
-function [iafSum, iafChan, freqs, com] = pop_eegstats(EEG, varargin)
+function [power, iafSum, iafChan, freqs, com] = pop_eegstats(EEG, varargin)
 
 if nargin < 1
     help pop_eegstats;
@@ -278,7 +282,7 @@ if ~isempty(fid)
 end
 
 % write history
-com = sprintf('EEG = pop_eegstats(EEG, %s);', vararg2str(options));
+com = sprintf('[iafSum, iafChan, freqs] = pop_eegstats(EEG, %s);', vararg2str(options));
 
 function myfprintf(fid, str, varargin)
 
