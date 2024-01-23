@@ -1,12 +1,12 @@
-This plugin compute frequency band power, alpha peak frequency, and alpha asymetry. It uses the [restingIAF](https://github.com/corcorana/restingIAF) MATLAB code for some of the computation.
+This plugin computes frequency band power, alpha peak frequency, and alpha asymmetry. It uses the [restingIAF](https://github.com/corcorana/restingIAF) MATLAB code for some of the computation.
 
-# Do not download Github zip file
+# Do not download GitHub zip file
 
-Downloading the zip file, you will be missing the restingIAF code dependency. Instead download a released version or check out the repository with dependencies.
+Downloading the zip file, you will be missing the restingIAF code dependency. Instead, download a released version or check out the repository with dependencies.
 
 # Checkout repository
 
-Make sure to copy submodule when you clone the repository
+Make sure to copy the submodule when you clone the repository.
 
 ```
 git clone --recurse-submodules https://github.com/arnodelorme/eegstats.git
@@ -36,9 +36,9 @@ You can also recover these statistics using the command line call (see function 
 ```matlab
 [power, iafSum, iafChan, freqs] = pop_eegstats(EEG, 'thetarange',[4 6] ,'alpharange',[8 12] , ...
             'otherranges',[18 22;30 45],'averagepower','off','channels','','winsize',2, ...
-            'overlap',1,'iaf','on','iafminchan',1,'alphaasymmetry','on','asymchans','F3 F4');
+            'overlap',1,'iaf','on','iafminchan',1,'alphaasymmetry','on','asymchans','F3 F4', ...
+            'csvfile','save_these_results.csv');
 ```
-
 
 
 # Version history
