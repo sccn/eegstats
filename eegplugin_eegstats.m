@@ -13,7 +13,7 @@
 
 function vers = eegplugin_eegstats(fig, trystrs, catchstrs)
 
-vers = 'eegstats1.0'; % write the name of your plugin here and version
+vers = 'eegstats1.1'; % write the name of your plugin here and version
 if nargin < 3
     error('eegplugin_eegstats requires 3 arguments');
 end
@@ -29,7 +29,7 @@ end
 tools_m = findobj(fig, 'tag', 'tools'); % find by tag
 
 % we create the menu below
-cb = [ 'try, [~,~,~,LASTCOM] = pop_eegstats(EEG);' catchstrs.add_to_hist  ];
-uimenu( tools_m, 'label', 'EEG stats', 'CallBack', cb, 'separator', 'on');
+cb = [ 'try, [EEG,~,LASTCOM] = pop_eegstats(EEG);' catchstrs.store_and_hist  ];
+uimenu( tools_m, 'label', 'EEG freq/power statistics', 'CallBack', cb, 'separator', 'on');
 
 

@@ -43,4 +43,6 @@ You can also recover these statistics using the command line call (see function 
 
 # Version history
 
+v1.1 - better output formating and saving results in EEG structure
+
 v1.0 - initial version

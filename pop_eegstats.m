@@ -43,13 +43,22 @@
 % 'Fw' (default 11), 'k' (default 5), 'mpow', 'mdiff', 'nfft', 'norm'
 % 'taper' (all with default the same as the restingIAF function).
 %
-% Outputs: same as restingIAF function
-%   power   = spectral power computed using the pwelch function
-%   pSum    = structure containing summary statistics of alpha-band parameters
-%   pChans  = structure containing channel-wise spectral and alpha parameter data
-%   f       = trimmed vector of frequency bins resolved by `pwelch`
+% Outputs:
+%   EEG     - EEG structure with EEG.etc.eegstats structure containing fields
+%        eegstats.power, spectral power computed using the pwelch function
+%                               of size frequencies x channels
+%        eegstats.powerfreqs, frequency ranges for the power above
+%        eegstats.restingIAF.freqs, trimmed vector of frequency bins resolved 
+%                               by the PWELCH MATLAB function
+%        eegstats.restingIAF.pSum, structure containing summary statistics of 
+%                               alpha-band parameters
+%        eegstats.restingIAF.iafChan, structure containing channel-wise spectral 
+%                               and alpha parameter data
+%        eegstats.alpha_asymmetry, alpha power asymetry between elelectrodes 
+%                               defined in 'asymchans' at frequency 'alpharange'
+%  eegstats - structure with the same fields as above
 %
-% See also: restingIAF()
+% See also: RESTINGIAF
 %
 % Author: Arnaud Delorme, Oct. 2021
 
@@ -77,14 +86,14 @@
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 % THE POSSIBILITY OF SUCH DAMAGE.
 
-function [power, iafSum, iafChan, freqs, com] = pop_eegstats(EEG, varargin)
+function [EEG, eegstats, com] = pop_eegstats(EEG, varargin)
 
 if nargin < 1
     help pop_eegstats;
     return;
 end
 
-[iafSum, iafChan, freqs, com] = deal([]);
+eegstats = [];
 if nargin<2
     
     chanLabel = lower({ EEG(1).chanlocs.labels });
@@ -230,16 +239,17 @@ end
 myfprintf(fid, '\n');
 
 % write frequencies
+power = [];
 for iFreq = 1:size(freqRanges,1)
     myfprintf(fid, '%2.1f-%2.1f Hz', freqRanges(iFreq,1), freqRanges(iFreq,2));
     [~,indBeg] = min(abs(freqs-freqRanges(iFreq,1)));
     [~,indEnd] = min(abs(freqs-freqRanges(iFreq,2)));
     for iChan = 1:length(g.channels)
-        power(iChan) = mean(iafChan(iChan).pxx(indBeg:indEnd));
+        power(iFreq, iChan) = mean(iafChan(iChan).pxx(indBeg:indEnd));
     end
-    myfprintf(fid, '\t%1.5f', 10*log10(mean(power)));
+    myfprintf(fid, '\t%1.5f', 10*log10(mean(power(iFreq,:))));
     if ~strcmpi(g.averagepower, 'on')
-        myfprintf(fid, '\t%1.5f', 10*log10(power));
+        myfprintf(fid, '\t%1.5f', 10*log10(power(iFreq,:)));
     end
     myfprintf(fid, '\n');
 end
@@ -272,6 +282,7 @@ if strcmpi(g.alphaasymmetry, 'on') && ~isempty(g.asymchans)
     power1 = 10*log10(mean(iafChan(g.asymchans(1)).pxx(indBeg:indEnd)));
     power2 = 10*log10(mean(iafChan(g.asymchans(2)).pxx(indBeg:indEnd)));
     
+    alpha_asymmetry = power1-power2;
     myfprintf(fid, 'Alpha Asymmetry\t%1.5f\n', power1-power2);
     myfprintf(fid, '\n');
 end
@@ -281,8 +292,19 @@ if ~isempty(fid)
     fclose(fid);
 end
 
+eegstats.power        = power;
+eegstats.powerfreqs   = freqRanges;
+eegstats.restingIAF.freqs   = freqs;
+eegstats.restingIAF.pSum    = iafSum;
+eegstats.restingIAF.iafChan = iafChan;
+eegstats.alpha_asymmetry = alpha_asymmetry;
+eegstats.parameters      = options;
+
+EEG.etc.eegstats = eegstats;
+disp('EEG statsitics saved into EEG.etc.eegstats')
+
 % write history
-com = sprintf('[iafSum, iafChan, freqs] = pop_eegstats(EEG, %s);', vararg2str(options));
+com = sprintf('EEG = pop_eegstats(EEG, %s);', vararg2str(options));
 
 function myfprintf(fid, str, varargin)
 
