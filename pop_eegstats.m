@@ -93,6 +93,7 @@ if nargin < 1
     return;
 end
 
+com = '';
 eegstats = [];
 if nargin<2
     
