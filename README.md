@@ -59,7 +59,7 @@ p =
     {[0.0345]}
 ```
 
-Or convert the data to a table, and perform statistics using MATLAB statistics toolbox or using external software.
+Or convert the data to a table, and perform statistics using MATLAB statistics toolbox or using external software. The table below was obtained by applying these commands to a subset of the STERN EEGLAB STUDY available on this [page](https://eeglab.org/tutorials/tutorial_data.html)
 
 ```matlab
 res = std_cell2table([], [], aa, info, 'design', STUDY.design(2),  'dimensions', {'subjects' 'alpha_asymmetry' })
@@ -72,10 +72,10 @@ res =
      condition      subjects    alpha_asymmetry
     ____________    ________    _______________
 
-    {'a'}             1            -1.4385    
-    {'b'}             2              1.882    
-    {'a'}             1            -1.1305    
-    {'b'}             2             1.9947
+    {'ignore'  }       1            -1.4385    
+    {'ignore'  }       2              1.882    
+    {'memorize'}       1            -1.1305    
+    {'memorize'}       2             1.9947    
 ```
 
 
