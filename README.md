@@ -81,6 +81,8 @@ res =
 
 # Version history
 
+v1.2 - better STUDY support
+
 v1.1 - better output formating and saving results in EEG structure
 
 v1.0 - initial version
