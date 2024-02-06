@@ -280,12 +280,15 @@ if strcmpi(g.alphaasymmetry, 'on') && ~isempty(g.asymchans)
     [~,indBeg] = min(abs(freqs-g.alpharange(1)));
     [~,indEnd] = min(abs(freqs-g.alpharange(2)));
     
+    % See Smith et al. (2017) for log-transformation https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6449497/
     power1 = 10*log10(mean(iafChan(g.asymchans(1)).pxx(indBeg:indEnd)));
     power2 = 10*log10(mean(iafChan(g.asymchans(2)).pxx(indBeg:indEnd)));
     
     alpha_asymmetry = power1-power2;
     myfprintf(fid, 'Alpha Asymmetry\t%1.5f\n', power1-power2);
     myfprintf(fid, '\n');
+else
+    alpha_asymmetry = NaN;
 end
 
 % close file
