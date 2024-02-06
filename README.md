@@ -14,7 +14,7 @@ git clone --recurse-submodules https://github.com/arnodelorme/eegstats.git
 
 # Graphic interface
 
-The plugin may be used from the command line or from its GUI. See the [pop_eegstats.m](https://github.com/arnodelorme/eegstats/blob/master/pop_eegstats.m) header for more information.
+The plugin may be used from the command line or from its GUI. After installing the plugin using the EEGLAB plugin manager (EEGLAB menu item **File > Manage EEGLAB extensions**), you may load the tutorial dataset "eeglab_data.set" from the "sample_data" folder of eeglab (or simply type "eeglab cont" on the MATLAB command line). Then use EEGLAB menu item **Tools > EEG freq/power statistics** and following UI will pop up. In this UI, you may select frequency ranges of interest, electrodes, and other spectral parameters. You may also select to compute individual alpha frequency or alpha asymmetry between electrodes of your choice. See the [pop_eegstats.m](https://github.com/arnodelorme/eegstats/blob/master/pop_eegstats.m) header for more information.
 
 ![](eegstats_gui.png)
 
@@ -38,6 +38,44 @@ You can also recover these statistics using the command line call (see function 
             'otherranges',[18 22;30 45],'averagepower','off','channels','','winsize',2, ...
             'overlap',1,'iaf','on','iafminchan',1,'alphaasymmetry','on','asymchans','F3 F4', ...
             'csvfile','save_these_results.csv');
+```
+
+# Group analysis
+
+The **EEG.etc.eegstats** structure contains the saved EEG spectral statistics. Assuming you have created an EEGLAB study, you may compute EEG statistics on all the datasets (the plugin is compatible with processing an entire EEGLAB STUDY). Then, from the EEGLAB command line, you may recover specific fields for all datasets. You can use the std_readdata function to read the data from all datasets (this uses the default STUDY design in STUDY.currentdesign -- otherwise you can also specify the design when calling the function).
+
+```matlab
+[STUDY,aa,xvals,~,~,~,~,info] = std_readdata(STUDY, ALLEEG, 'customread', 'std_readeegfield', 'customparams', {{ 'etc', 'eegstats', 'alpha_asymmetry' }}, 'ndim', 1);
+```
+Then you can perform statistics using EEGLAB building functions. 
+
+```
+[~,p] = std_stat(aa, 'groupstats', 'on'), % perform some statistics based on the current STUDY design
+
+p =
+
+  1×1 cell array
+
+    {[0.0345]}
+```
+
+Or convert the data to a table, and perform statistics using MATLAB statistics toolbox or using external software.
+
+```matlab
+res = std_cell2table([], [], aa, info, 'design', STUDY.design(2),  'dimensions', {'subjects' 'alpha_asymmetry' })
+writetable(res, 'mydata.csv'); % this writes the data to disk
+
+res =
+
+  4×3 table
+
+     condition      subjects    alpha_asymmetry
+    ____________    ________    _______________
+
+    {'a'  }           1            -1.4385    
+    {'b'  }           2              1.882    
+    {'a'}             1            -1.1305    
+    {'b'}             2             1.9947
 ```
 
 
