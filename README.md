@@ -1,4 +1,6 @@
-This plugin computes frequency band power, alpha peak frequency, and alpha asymmetry. It uses the [restingIAF](https://github.com/corcorana/restingIAF) MATLAB code for some of the computation.
+# EEGSTATS plugin for EEGLAB
+
+This plugin computes frequency band power, alpha peak frequency, and alpha asymmetry. It uses the [restingIAF](https://github.com/corcorana/restingIAF) MATLAB code for some computation.
 
 # Do not download GitHub zip file
 
