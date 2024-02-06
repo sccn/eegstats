@@ -2,11 +2,11 @@
 
 This plugin computes frequency band power, alpha peak frequency, and alpha asymmetry. It uses the [restingIAF](https://github.com/corcorana/restingIAF) MATLAB code for some computation.
 
-# Do not download GitHub zip file
+## Do not download GitHub zip file
 
 Downloading the zip file, you will be missing the restingIAF code dependency. Instead, download a released version or check out the repository with dependencies.
 
-# Checkout repository
+## Checkout repository
 
 Make sure to copy the submodule when you clone the repository.
 
@@ -14,7 +14,7 @@ Make sure to copy the submodule when you clone the repository.
 git clone --recurse-submodules https://github.com/arnodelorme/eegstats.git
 ```
 
-# Graphic interface
+## Graphic interface
 
 The plugin may be used from the command line or from its GUI. After installing the plugin using the EEGLAB plugin manager (EEGLAB menu item **File > Manage EEGLAB extensions**), you may load the tutorial dataset "eeglab_data.set" from the "sample_data" folder of eeglab (or simply type "eeglab cont" on the MATLAB command line). Then use EEGLAB menu item **Tools > EEG freq/power statistics** and following UI will pop up. In this UI, you may select frequency ranges of interest, electrodes, and other spectral parameters. You may also select to compute individual alpha frequency or alpha asymmetry between electrodes of your choice. See the [pop_eegstats.m](https://github.com/arnodelorme/eegstats/blob/master/pop_eegstats.m) header for more information.
 
@@ -42,7 +42,7 @@ You can also recover these statistics using the command line call (see function 
             'csvfile','save_these_results.csv');
 ```
 
-# Group analysis
+## Group analysis
 
 The **EEG.etc.eegstats** structure contains the saved EEG spectral statistics. Assuming you have created an EEGLAB study (requires EEGLAB 2024.0 or later version), you may compute EEG statistics on all the datasets (the plugin is compatible with processing an entire EEGLAB STUDY). Then, from the EEGLAB command line, you may recover specific fields for all datasets. You can use the ***std_readdata*** function to read the data from all datasets (this uses the default STUDY design in STUDY.currentdesign -- otherwise, you can also specify the design when calling the ***std_readdata*** function by setting the 'design' parameter).
 
@@ -81,7 +81,7 @@ res =
 ```
 
 
-# Version history
+## Version history
 
 v1.2 - better STUDY support
 
