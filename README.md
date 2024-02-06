@@ -4,11 +4,11 @@ This plugin computes frequency band power, alpha peak frequency, and alpha asymm
 
 ## Do not download GitHub zip file
 
-You will miss the resting IAF code dependency when downloading the zip file. Instead, download the plugin from the EEGLAB extension manager.
+You will miss the resting IAF code dependency when downloading the zip file. Instead, download the plugin from the EEGLAB extension manager or clone the repository as indicated below.
 
 ## Checkout repository
 
-Make sure to copy the submodule when you clone the repository.
+Make sure to copy the submodule when you clone the repository. You may clone the repository in the **plugins** folder of EEGLAB, and the plugin will behave as if you had downloaded it from the EEGLAB plugin manager.
 
 ```
 git clone --recurse-submodules https://github.com/arnodelorme/eegstats.git
@@ -42,7 +42,7 @@ You can also recover these statistics using the command line call (see function 
             'csvfile','save_these_results.csv');
 ```
 
-## Group analysis
+## Group analysis (beta)
 
 The **EEG.etc.eegstats** structure contains the saved EEG spectral statistics. Assuming you have created an EEGLAB study (requires EEGLAB 2024.0 or later version), you may compute EEG statistics on all the datasets (the plugin is compatible with processing an entire EEGLAB STUDY). Then, from the EEGLAB command line, you may recover specific fields for all datasets. You can use the ***std_readdata*** function to read the data from all datasets (this uses the default STUDY design in STUDY.currentdesign -- otherwise, you can also specify the design when calling the ***std_readdata*** function by setting the 'design' parameter).
 
