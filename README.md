@@ -4,7 +4,7 @@ This plugin computes frequency band power, alpha peak frequency, and alpha asymm
 
 ## Do not download GitHub zip file
 
-Downloading the zip file, you will be missing the restingIAF code dependency. Instead, download a released version or check out the repository with dependencies.
+Downloading the zip file, you will be missing the restingIAF code dependency. Instead, download the plugin from the EEGLAB extension manager.
 
 ## Checkout repository
 
