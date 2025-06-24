@@ -13,7 +13,7 @@
 
 function vers = eegplugin_eegstats(fig, trystrs, catchstrs)
 
-vers = 'eegstats1.2'; % write the name of your plugin here and version
+vers = 'eegstats1.3'; % write the name of your plugin here and version
 if nargin < 3
     error('eegplugin_eegstats requires 3 arguments');
 end

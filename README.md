@@ -81,6 +81,8 @@ res =
 
 # Version history
 
+v1.3 - update pop_eegstats.m header
+
 v1.2 - better STUDY support
 
 v1.1 - better output formating and saving results in EEG structure

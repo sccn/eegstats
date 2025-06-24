@@ -2,7 +2,7 @@
 %
 % Usage:
 %         >> pop_eegstats(EEG); % pop-up graphical interface
-%         >> [power, iafSum, iafChan, freqs] = pop_eegstats(EEG, 'key', 'val', ...);
+%         >> [EEG, eegstats] = pop_eegstats(EEG, 'key', 'val', ...);
 %
 % Inputs:
 %  EEG      - input EEGLAB dataset.
@@ -305,7 +305,7 @@ eegstats.alpha_asymmetry = alpha_asymmetry;
 eegstats.parameters      = options;
 
 EEG.etc.eegstats = eegstats;
-disp('EEG statsitics saved into EEG.etc.eegstats')
+disp('EEG statistics saved into EEG.etc.eegstats')
 
 % write history
 com = sprintf('EEG = pop_eegstats(EEG, %s);', vararg2str(options));
