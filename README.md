@@ -87,6 +87,8 @@ res =
 
 ## Version history
 
+v1.4 - allowing to use median instead of mean; providing labels for all freq. bands
+
 v1.3 - update pop_eegstats.m header
 
 v1.2 - better STUDY support
