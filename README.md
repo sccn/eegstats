@@ -1,18 +1,20 @@
-This plugin computes frequency band power, alpha peak frequency, and alpha asymmetry. It uses the [restingIAF](https://github.com/corcorana/restingIAF) MATLAB code for some of the computation.
+# EEGSTATS plugin for EEGLAB
 
-# Do not download GitHub zip file
+This plugin computes frequency band power, alpha peak frequency, and alpha asymmetry. It uses the [restingIAF](https://github.com/corcorana/restingIAF) MATLAB code for some computation.
 
-Downloading the zip file, you will be missing the restingIAF code dependency. Instead, download a released version or check out the repository with dependencies.
+## Do not download GitHub zip file
 
-# Checkout repository
+You will miss the resting IAF code dependency when downloading the zip file. Instead, download the plugin from the EEGLAB extension manager or clone the repository as indicated below.
 
-Make sure to copy the submodule when you clone the repository.
+## Checkout repository
+
+Make sure to copy the submodule when you clone the repository. You may clone the repository in the **plugins** folder of EEGLAB, and the plugin will behave as if you had downloaded it from the EEGLAB plugin manager.
 
 ```
 git clone --recurse-submodules https://github.com/arnodelorme/eegstats.git
 ```
 
-# Graphic interface
+## Graphic interface
 
 The plugin may be used from the command line or from its GUI. After installing the plugin using the EEGLAB plugin manager (EEGLAB menu item **File > Manage EEGLAB extensions**), you may load the tutorial dataset "eeglab_data.set" from the "sample_data" folder of eeglab (or simply type "eeglab cont" on the MATLAB command line). Then use EEGLAB menu item **Tools > EEG freq/power statistics** and following UI will pop up. In this UI, you may select frequency ranges of interest, electrodes, and other spectral parameters. You may also select to compute individual alpha frequency or alpha asymmetry between electrodes of your choice. See the [pop_eegstats.m](https://github.com/arnodelorme/eegstats/blob/master/pop_eegstats.m) header for more information.
 
@@ -40,13 +42,17 @@ You can also recover these statistics using the command line call (see function 
             'csvfile','save_these_results.csv');
 ```
 
-# Group analysis
+## Group analysis (beta)
 
-The **EEG.etc.eegstats** structure contains the saved EEG spectral statistics. Assuming you have created an EEGLAB study (requires EEGLAB 2024.0 or later version), you may compute EEG statistics on all the datasets (the plugin is compatible with processing an entire EEGLAB STUDY). Then, from the EEGLAB command line, you may recover specific fields for all datasets. You can use the std_readdata function to read the data from all datasets (this uses the default STUDY design in STUDY.currentdesign -- otherwise you can also specify the design when calling the function).
+The **EEG.etc.eegstats** structure contains the saved EEG spectral statistics. Assuming you have created an EEGLAB study (requires EEGLAB 2024.0 or later version), you may compute EEG statistics on all the datasets (the plugin is compatible with processing an entire EEGLAB STUDY). Then, from the EEGLAB command line, you may recover specific fields for all datasets. You can use the ***std_readdata*** function to read the data from all datasets (this uses the default STUDY design in STUDY.currentdesign -- otherwise, you can also specify the design when calling the ***std_readdata*** function by setting the 'design' parameter).
 
+{% raw %}
 ```matlab
-[STUDY,aa,xvals,~,~,~,~,info] = std_readdata(STUDY, ALLEEG, 'customread', 'std_readeegfield', 'customparams', {{ 'etc', 'eegstats', 'alpha_asymmetry' }}, 'ndim', 1);
+[STUDY,aa,xvals,~,~,~,~,info] = std_readdata(STUDY, ALLEEG, 'customread', 'std_readeegfield', ...
+                          'customparams', {{ 'etc', 'eegstats', 'alpha_asymmetry' }}, 'ndim', 1);
 ```
+{% endraw %}
+
 Then you can perform statistics using EEGLAB building functions. 
 
 ```
@@ -59,7 +65,7 @@ p =
     {[0.0345]}
 ```
 
-Or convert the data to a table, and perform statistics using MATLAB statistics toolbox or using external software.
+Or convert the data to a table, and perform statistics using MATLAB statistics toolbox or using external software. The table below was obtained by applying these commands to a subset of the STERN EEGLAB STUDY available on this [page](https://eeglab.org/tutorials/tutorial_data.html)
 
 ```matlab
 res = std_cell2table([], [], aa, info, 'design', STUDY.design(2),  'dimensions', {'subjects' 'alpha_asymmetry' })
@@ -72,14 +78,14 @@ res =
      condition      subjects    alpha_asymmetry
     ____________    ________    _______________
 
-    {'a'}             1            -1.4385    
-    {'b'}             2              1.882    
-    {'a'}             1            -1.1305    
-    {'b'}             2             1.9947
+    {'ignore'  }       1            -1.4385    
+    {'ignore'  }       2              1.882    
+    {'memorize'}       1            -1.1305    
+    {'memorize'}       2             1.9947    
 ```
 
 
-# Version history
+## Version history
 
 v1.3 - update pop_eegstats.m header
 
