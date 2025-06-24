@@ -8,9 +8,12 @@
 %  EEG      - input EEGLAB dataset.
 %
 % Optional inputs:
-% 'thetarange'     - [min max] theta range. Default is [4 6].
+% 'thetarange'     - [min max] theta range. Default is [4 7].
 % 'alpharange'     - [min max] alpha range. Default is [8 12].
-% 'otherranges'    - [min max] alpha range. Default is [8 12].
+% 'otherranges'    - [min max] one per row. Default is [0.5 4; 13 30]
+% 'otherrangelabels' - [cell] one per row. Default is { 'delta' 'beta' }
+%                    See frequency band definitions at 
+%                    https://www.ncbi.nlm.nih.gov/books/NBK539805/
 % 'averagepower'   - ['on' or 'off'] average power across channels. Default is 'off'
 % 'channels'       - [list of channels] can be a cell array of string or
 %                    integer array. Default is empty and to use all
@@ -21,6 +24,9 @@
 %                    Default is 2 seconds.
 % 'csvfile'        - ['string'] file name to save results. Default is to
 %                    only display results on the command line.
+% 'aggmethod'      - ['mean' or 'median'] aggregate power accross windows
+%                    using either the mean or the median. Default is to use 
+%                    the mean.
 %
 % Individual alpha frequency options:
 % 'iaf'            - ['on' or 'off'] save/display individual alpha frequencies
@@ -117,16 +123,20 @@ if nargin<2
     uilist = { ...
         { 'style' 'text' 'string' 'Frequency ranges' 'fontweight' 'bold' } ...
         {} { 'style' 'text' 'string' 'Theta frequency range (min max in Hz)' } ...
-        { 'style' 'edit' 'string' '4 6' 'tag' 'thetarange' } {} ...
+        { 'style' 'edit' 'string' '4 7' 'tag' 'thetarange' } {} ...
         {} { 'style' 'text' 'string' 'Alpha frequency range (min max in Hz)' } ...
         { 'style' 'edit' 'string' '8 12' 'tag' 'alpharange'  } {} ...
         {} { 'style' 'text' 'string' 'Other frequency ranges (separate by ";")' } ...
-        { 'style' 'edit' 'string' '18 22; 30 45' 'tag' 'otherranges'  } {} ...
+        { 'style' 'edit' 'string' '0.5 4; 13 30' 'tag' 'otherranges'  } {} ...
+        {} { 'style' 'text' 'string' 'Other frequency ranges labels' } ...
+        { 'style' 'edit' 'string' '''delta'', ''beta''' 'tag' 'otherrangelabels'  } {} ...
         ...
         { 'style' 'text' 'string' 'Power Spectral Density parameters (PSD)' 'fontweight' 'bold' } ...
+        {} { 'style' 'checkbox' 'string' 'Use median to aggregate power over time windows (unchecked: use mean)' 'tag' 'aggmethod' } ...
+        {} {} ...
         {} { 'style' 'checkbox' 'string' 'Average channels'' power (unchecked: individual channel power)' 'tag' 'averagepower' } ...
         {} {} ...
-        {} { 'style' 'text' 'string' 'Channel indices or names (default:all)' } ...
+        {} { 'style' 'text' 'string' 'Channel indices or labels (default:all)' } ...
         { 'style' 'edit' 'string' '' 'tag' 'channels' } ...
         { 'style' 'pushbutton' 'string'  '...', 'enable' fastif(isempty(EEG(1).chanlocs), 'off', 'on') 'callback' cb_chan1 }, ...
         {} { 'style' 'text' 'string' 'PSD window size (seconds)' } ...
@@ -147,7 +157,7 @@ if nargin<2
         };
     
     row = [0.2 1.9 0.8 0.6] ;
-    [~,~,~,results] = inputgui( 'geometry', { [1] row row row 1 [0.2 3.1 0.05 0.05] row row row 1 row row 1 [1.5 0.1 1.1 0.6] }, ...
+    [~,~,~,results] = inputgui( 'geometry', { [1] row row row row 1 [0.2 3.1 0.05 0.05] [0.2 3.1 0.05 0.05] row row row 1 row row 1 [1.5 0.1 1.1 0.6] }, ...
         'uilist', uilist, 'helpcom', 'pophelp(''pop_eegstats'')', ...
         'title', 'Compute EEG measures -- pop_eegstats()', 'userdata', EEG(1));
     if isempty(results), return; end
@@ -155,12 +165,14 @@ if nargin<2
     results.thetarange = str2num(results.thetarange);
     results.alpharange = str2num(results.alpharange);
     results.otherranges = str2num( [ '[' results.otherranges ']' ]);
+    results.otherrangelabels = eval( [ '{' results.otherrangelabels '}' ]);
     results.winsize = str2double(results.winsize);
     results.overlap = str2double(results.overlap);
     results.iaf = fastif(results.iaf, 'on', 'off');
     results.iafminchan = str2double(results.iafminchan);
     results.alphaasymmetry = fastif(results.alphaasymmetry, 'on', 'off');
     results.averagepower   = fastif(results.averagepower  , 'on', 'off');
+    results.aggmethod      = fastif(results.aggmethod     , 'median', 'mean');
     
     options = fieldnames(results);
     options(:,2) = struct2cell(results);
@@ -181,10 +193,12 @@ end
 % checking parameters
 % -------------------
 g = finputcheck(options, { ...
-    'thetarange'     'float'  []      [4 6];
+    'thetarange'     'float'  []      [4 7];
     'alpharange'     'float'  []      [8 12];
-    'otherranges'    'float'  []      [];
+    'otherranges'    'float'  []      [0.5 4; 13 30];
+    'otherrangelabels' 'cell'   []      { 'delta' 'beta' };
     'averagepower'   'string' { 'on' 'off' } 'off';
+    'aggmethod'       'string' { 'mean' 'median' } 'mean'; ...
     'channels'       {'integer' 'string' 'cell'} { {} {} {} } '';
     'winsize'        'float'  []      2;
     'overlap'        'float'  []      1;
@@ -221,6 +235,13 @@ if isempty(g.nfft), g.nfft = 2^nextpow2(g.winsize*EEG.srate); end
 [iafSum,  iafChan,  freqs] = restingIAF(EEG.data(chaninds,:), length(chaninds), g.iafminchan, [0 EEG(1).srate/2], EEG(1).srate, g.alpharange, g.Fw, g.k, g.mpow, g.mdiff, g.taper  , g.winsize*EEG(1).srate, g.overlap*EEG(1).srate, g.nfft, g.norm);
 
 freqRanges = [ g.thetarange; g.alpharange; g.otherranges];
+freqRangeLabels = [ { 'theta' 'alphas' } g.otherrangelabels ];
+
+% reorder frequencies
+[~, order] = sort(freqRanges(:,1));
+freqRanges = freqRanges(order,:);
+freqRangeLabels = freqRangeLabels(order);
+
 if ~isempty(g.csvfile)
     fid = fopen(g.csvfile, 'w');
     if fid == -1
@@ -242,11 +263,15 @@ myfprintf(fid, '\n');
 % write frequencies
 power = [];
 for iFreq = 1:size(freqRanges,1)
-    myfprintf(fid, '%2.1f-%2.1f Hz', freqRanges(iFreq,1), freqRanges(iFreq,2));
+    myfprintf(fid, '%2.1f-%2.1f Hz (%s)', freqRanges(iFreq,1), freqRanges(iFreq,2), freqRangeLabels{iFreq});
     [~,indBeg] = min(abs(freqs-freqRanges(iFreq,1)));
     [~,indEnd] = min(abs(freqs-freqRanges(iFreq,2)));
     for iChan = 1:length(g.channels)
-        power(iFreq, iChan) = mean(iafChan(iChan).pxx(indBeg:indEnd));
+        if strcmpi(g.aggmethod, 'mean')
+            power(iFreq, iChan) = mean(iafChan(iChan).pxx(indBeg:indEnd));
+        else
+            power(iFreq, iChan) = median(iafChan(iChan).pxx(indBeg:indEnd));
+        end
     end
     myfprintf(fid, '\t%1.5f', 10*log10(mean(power(iFreq,:))));
     if ~strcmpi(g.averagepower, 'on')
@@ -298,6 +323,7 @@ end
 
 eegstats.power        = power;
 eegstats.powerfreqs   = freqRanges;
+eegstats.powerfreq_labels   = freqRangeLabels;
 eegstats.restingIAF.freqs   = freqs;
 eegstats.restingIAF.pSum    = iafSum;
 eegstats.restingIAF.iafChan = iafChan;
