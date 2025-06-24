@@ -231,7 +231,11 @@ if length(g.asymchans) ~= 2 && ~isempty(g.asymchans)
     error('Channel to calculate asymetry not found or too many/too few channels');
 end
 if isempty(g.nfft), g.nfft = 2^nextpow2(g.winsize*EEG.srate); end
-    
+
+if ~isempty(eeg_findboundaries(EEG))
+    fprintf(2, 'This dataset contains boundary to delineate data segments, but this function does not support them\n')
+end
+
 [iafSum,  iafChan,  freqs] = restingIAF(EEG.data(chaninds,:), length(chaninds), g.iafminchan, [0 EEG(1).srate/2], EEG(1).srate, g.alpharange, g.Fw, g.k, g.mpow, g.mdiff, g.taper  , g.winsize*EEG(1).srate, g.overlap*EEG(1).srate, g.nfft, g.norm);
 
 freqRanges = [ g.thetarange; g.alpharange; g.otherranges];
